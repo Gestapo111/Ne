@@ -1,124 +1,414 @@
-import React, { useState } from 'react';
-import { 
-  Card, 
-  CardHeader,
-  CardTitle,
-  CardContent 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Mail, Send, Phone, Trash2, UserPlus } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Administración de Usuarios</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-const UserAdmin = () => {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Ana García', email: 'ana@ejemplo.com', phone: '+34600000001' },
-    { id: 2, name: 'Juan López', email: 'juan@ejemplo.com', phone: '+34600000002' },
-    { id: 3, name: 'María Pérez', email: 'maria@ejemplo.com', phone: '+34600000003' }
-  ]);
+        body {
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+        }
 
-  const [newUser, setNewUser] = useState({
-    name: '',
-    email: '',
-    phone: ''
-  });
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-  const handleAddUser = () => {
-    if (newUser.name && newUser.email && newUser.phone) {
-      setUsers([...users, { ...newUser, id: users.length + 1 }]);
-      setNewUser({ name: '', email: '', phone: '' });
-    }
-  };
+        .header {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
 
-  const handleDeleteUser = (id) => {
-    setUsers(users.filter(user => user.id !== id));
-  };
+        .title {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-  const sendWhatsApp = (phone) => {
-    window.open(`https://wa.me/${phone.replace('+', '')}`, '_blank');
-  };
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-  const sendEmail = (email) => {
-    window.open(`mailto:${email}`, '_blank');
-  };
+        .input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            transition: border-color 0.3s;
+        }
 
-  return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Administrador de Usuarios</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {/* Formulario de nuevo usuario */}
-        <div className="mb-6 grid grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={newUser.name}
-            onChange={(e) => setNewUser({...newUser, name: e.target.value})}
-            className="p-2 border rounded"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-            className="p-2 border rounded"
-          />
-          <input
-            type="tel"
-            placeholder="Teléfono"
-            value={newUser.phone}
-            onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
-            className="p-2 border rounded"
-          />
-          <Button 
-            onClick={handleAddUser}
-            className="flex items-center gap-2"
-          >
-            <UserPlus size={20} />
-            Añadir Usuario
-          </Button>
-        </div>
+        .input:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
 
-        {/* Lista de usuarios */}
-        <div className="space-y-4">
-          {users.map(user => (
-            <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex-1">
-                <h3 className="font-medium">{user.name}</h3>
-                <p className="text-sm text-gray-600">{user.email}</p>
-                <p className="text-sm text-gray-600">{user.phone}</p>
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline"
-                  onClick={() => sendWhatsApp(user.phone)}
-                  className="flex items-center gap-2"
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #357abd;
+        }
+
+        .btn-success {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #128C7E;
+        }
+
+        .btn-info {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #357abd;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .user-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .user-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .user-contact {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .user-card {
+                padding: 15px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .stats {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 6px;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" x-data="{
+        users: JSON.parse(localStorage.getItem('users') || '[]'),
+        newUser: { name: '', email: '', phone: '' },
+        searchTerm: '',
+        toast: { message: '', visible: false },
+        
+        init() {
+            if (this.users.length === 0) {
+                this.users = [
+                    { id: 1, name: 'Ana García', email: 'ana@ejemplo.com', phone: '+34600000001' },
+                    { id: 2, name: 'Juan López', email: 'juan@ejemplo.com', phone: '+34600000002' }
+                ];
+                this.saveUsers();
+            }
+        },
+
+        showToast(message) {
+            this.toast.message = message;
+            this.toast.visible = true;
+            setTimeout(() => this.toast.visible = false, 3000);
+        },
+        
+        addUser() {
+            if (this.newUser.name && this.newUser.email && this.newUser.phone) {
+                this.users.push({
+                    id: Date.now(),
+                    ...this.newUser
+                });
+                this.saveUsers();
+                this.newUser = { name: '', email: '', phone: '' };
+                this.showToast('Usuario agregado correctamente');
+            }
+        },
+        
+        deleteUser(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                this.users = this.users.filter(user => user.id !== id);
+                this.saveUsers();
+                this.showToast('Usuario eliminado correctamente');
+            }
+        },
+        
+        saveUsers() {
+            localStorage.setItem('users', JSON.stringify(this.users));
+        },
+        
+        sendWhatsApp(phone) {
+            window.open(`https://wa.me/${phone.replace('+', '')}`, '_blank');
+        },
+        
+        sendEmail(email) {
+            window.open(`mailto:${email}`, '_blank');
+        },
+
+        get filteredUsers() {
+            return this.users.filter(user => 
+                user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                user.phone.includes(this.searchTerm)
+            );
+        },
+
+        get stats() {
+            return {
+                total: this.users.length,
+                withWhatsApp: this.users.filter(u => u.phone.startsWith('+')).length,
+                withEmail: this.users.filter(u => u.email.includes('@')).length
+            };
+        }
+    }">
+        <div class="header">
+            <h1 class="title">
+                <i class="fas fa-users"></i>
+                Sistema de Administración de Usuarios
+            </h1>
+            
+            <div class="form-grid">
+                <input 
+                    type="text" 
+                    x-model="newUser.name"
+                    placeholder="Nombre"
+                    class="input"
                 >
-                  <Phone size={20} />
-                  WhatsApp
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => sendEmail(user.email)}
-                  className="flex items-center gap-2"
+                <input 
+                    type="email" 
+                    x-model="newUser.email"
+                    placeholder="Email"
+                    class="input"
                 >
-                  <Mail size={20} />
-                  Email
-                </Button>
-                <Button 
-                  variant="destructive"
-                  onClick={() => handleDeleteUser(user.id)}
-                  className="flex items-center gap-2"
+                <input 
+                    type="tel" 
+                    x-model="newUser.phone"
+                    placeholder="Teléfono (+34...)"
+                    class="input"
                 >
-                  <Trash2 size={20} />
-                  Eliminar
-                </Button>
-              </div>
+                <button 
+                    @click="addUser()"
+                    class="btn btn-primary"
+                >
+                    <i class="fas fa-user-plus"></i>
+                    Añadir Usuario
+                </button>
             </div>
-          ))}
         </div>
-      </CardContent>
-    </Card>
-  );
-};
 
-export default UserAdmin;
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" x-text="stats.total"></div>
+                <div class="stat-label">Total Usuarios</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" x-text="stats.withWhatsApp"></div>
+                <div class="stat-label">Con WhatsApp</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" x-text="stats.withEmail"></div>
+                <div class="stat-label">Con Email</div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <input 
+                type="text" 
+                x-model="searchTerm"
+                placeholder="Buscar usuarios..."
+                class="search-input"
+            >
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <div class="user-list">
+            <template x-for="user in filteredUsers" :key="user.id">
+                <div class="user-card">
+                    <div class="user-info">
+                        <div class="user-name" x-text="user.name"></div>
+                        <div class="user-contact" x-text="user.email"></div>
+                        <div class="user-contact" x-text="user.phone"></div>
+                    </div>
+                    <div class="actions">
+                        <button 
+                            @click="sendWhatsApp(user.phone)"
+                            class="btn btn-success"
+                        >
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
+                        </button>
+                        <button 
+                            @click="sendEmail(user.email)"
+                            class="btn btn-info"
+                        >
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </button>
+                        <button 
+                            @click="deleteUser(user.id)"
+                            class="btn btn-danger"
+                        >
+                            <i class="fas fa-trash"></i>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div 
+            class="toast"
+            x-show="toast.visible"
+            x-transition
+            x-text="toast.message"
+        ></div>
+    </div>
+</body>
+</html>
